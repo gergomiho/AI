@@ -14,11 +14,18 @@ namespace AI
         private bool itsGender;
         private double itsBreedingRate;
         private double itsFightingRate;
+        private double itsWorkRate;
         private int itsStrength;
         private int itsHealth;
         private int maxChildren;
         private int maxFight;
         private bool bIsAlive;
+        private List<Items> Items;
+
+        public List<Items> itsItems()
+        {
+            return Items;
+        }
 
         public bool isAlive()
         {
@@ -88,6 +95,19 @@ namespace AI
             }
         }
 
+        public void doWork()
+        {
+            if (bIsAlive)
+            {
+                if (itsWorkRate > this.rnd.NextDouble())
+                {
+                    Items.Type Type = (Items.Type)rnd.Next(0, 4);
+                    Items[(int)Type]++;
+                    Console.WriteLine("Gathered one of {0}", Type);
+                }
+            }
+        }
+
         public Entities()
         {
             rnd = new Random(Guid.NewGuid().GetHashCode());
@@ -98,9 +118,11 @@ namespace AI
             itsGender = rnd.Next(0, 100) >= 50 ? true : false;
             itsBreedingRate = rnd.NextDouble()/maxAge*maxChildren;
             itsFightingRate = rnd.NextDouble()/maxAge*maxFight;
+            itsWorkRate = rnd.NextDouble();
             itsStrength = rnd.Next(0, 100);
             itsHealth = rnd.Next(80, 100);
             bIsAlive = true;
+            Items = new List<Items>() { new AI.Items(AI.Items.Type.money), new AI.Items(AI.Items.Type.wood), new AI.Items(AI.Items.Type.stone), new AI.Items(AI.Items.Type.meat) };
 
             Console.WriteLine("Entity has born !");
         }
