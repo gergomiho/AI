@@ -14,11 +14,27 @@ namespace AI
         private int yMaxSize;
         private Items.Type[,] ZoneType;
         private List<Entities>[,] SpawnedEntities;
+        private List<Buildings>[,] SpawnedBuilding;
 
         public void DisplayEntityCount()
         {
             for (int x = 0; x < xMaxSize; x++)
             {
+                Console.WriteLine();
+
+                for(int y = 0; y < yMaxSize; y++)
+                {
+                    if (SpawnedBuilding[x, y].Count > 0)
+                    {
+                        if (SpawnedBuilding[x, y][0].isBuilt())
+                            Console.Write("/\"\"\\   ");
+                    }
+                    else
+                        Console.Write("       ");
+                }
+
+                Console.WriteLine();
+
                 for (int y = 0; y < yMaxSize; y++)
                 {
                     switch (ZoneType[x, y])
@@ -38,17 +54,51 @@ namespace AI
                         default:
                             break;
                     }
-                    Console.Write("[{0}]   ", Zone[x, y]);
+                    Console.Write("[{0}]   ", Zone[x, y].ToString("D2"));
                     Console.ResetColor();
                 }
-                Console.WriteLine();
-                Console.WriteLine();
             }
         }
 
         public Items.Type getTerrainType(int x, int y)
         {
             return ZoneType[x, y];
+        }
+
+        public void UpdateBuldings()
+        {
+            for(int x = 0; x < xMaxSize; x++)
+            {
+                for(int y = 0; y < yMaxSize; y++)
+                {
+                    foreach(Buildings context in SpawnedBuilding[x, y])
+                    {
+                        context.buildIfReady();
+                    }
+                }
+            }
+        }
+
+        public bool SpawnBuilding(int x, int y, Buildings context)
+        {
+            if (0 <= x && x < xMaxSize && 0 <= y && y < yMaxSize)
+            {
+                SpawnedBuilding[x, y].Add(context);
+                return true;
+            }
+            return false;
+        }
+
+        public Buildings getBuildingByPos(int x, int y)
+        {
+            if (0 <= x && x < xMaxSize && 0 <= y && y < yMaxSize)
+            {
+                if (SpawnedBuilding[x, y].Count > 0)
+                    return SpawnedBuilding[x, y][0];
+                else
+                    return null;
+            }
+            return null;
         }
 
         public bool SpawnEntity(int x, int y, Entities context)
@@ -101,12 +151,14 @@ namespace AI
             Zone = new int[xMaxSize, yMaxSize];
             ZoneType = new Items.Type[xMaxSize, yMaxSize];
             SpawnedEntities = new List<Entities>[xMaxSize, yMaxSize];
+            SpawnedBuilding = new List<Buildings>[xMaxSize, yMaxSize];
             for (int x = 0; x < xMaxSize; x++)
             {
                 for (int y = 0; y < yMaxSize; y++)
                 {
                     ZoneType[x, y] = (Items.Type)rnd.Next(0, 4);
                     SpawnedEntities[x, y] = new List<Entities>();
+                    SpawnedBuilding[x, y] = new List<Buildings>();
                 }
             }
         }

@@ -12,10 +12,20 @@ namespace AI
         private Type itsType;
         private int itsAmount;
 
-        public Items(Type type)
+        public void gatherItem(int x)
+        {
+            this.itsAmount += x;
+        }
+
+        public void destroyItem(int x)
+        {
+            this.itsAmount -= x;
+        }
+
+        public Items(Type type, int Amount = 0)
         {
             itsType = type;
-            itsAmount = 0;
+            itsAmount = Amount;
         }
 
         public static Items operator ++(Items item)
@@ -24,9 +34,20 @@ namespace AI
             return item;
         }
 
+        public static Items operator +(Items item, Items item2)
+        {
+            item.itsAmount += item2.Amount();
+            return item;
+        }
+
         public int Amount()
         {
             return itsAmount;
+        }
+
+        public Type itemType()
+        {
+            return itsType;
         }
 
         ~Items() { }

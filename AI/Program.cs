@@ -12,6 +12,7 @@ namespace AI
         {
             World CurrentWorld = new World();
             List<Entities> EntityList = SpawnEntities(100,CurrentWorld);
+            List<Buildings> BuildingList = SpawnBuilding(Buildings.Type.market, CurrentWorld, 0, 0);
             Random rnd = new Random(Guid.NewGuid().GetHashCode());
             
 
@@ -26,19 +27,21 @@ namespace AI
             {
                 List<Entities> born = new List<Entities>();
                 List<Entities> died = new List<Entities>();
+                CurrentWorld.UpdateBuldings();
 
                 foreach (Entities current in EntityList)
                 {
                     current.doAge();
-                    current.doWork(CurrentWorld);
-                    current.doMove((Entities.Direction)rnd.Next(0,5),CurrentWorld);
                     if (current.isAlive())
                     {
+                        current.doWork(CurrentWorld);
+                        current.doMove((Entities.Direction)rnd.Next(0, 5), CurrentWorld);
+                        current.doBuild(CurrentWorld);
                         foreach (Entities next in EntityList)
                         {
                             if (current != next)
                             {
-                                //born.Add(current.doBreed(next));
+                                born.Add(current.doBreed(next));
                                 current.doFight(next);
                             }
                         }
@@ -72,7 +75,7 @@ namespace AI
                 CurrentWorld.DisplayEntityCount();
                 
                 Console.Title = String.Format("Population : {0} | Money : {1} | Wood : {2} | Stone : {3} | Meat : {4}", EntityList.Count, sumMoney, sumStone, sumWood, sumMeat);
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(100);
             }
         }
 
@@ -83,10 +86,19 @@ namespace AI
             {
                 Entities temp = new Entities();
                 if(CurrentWorld.SpawnEntity(temp.getPosition().X, temp.getPosition().Y, temp))
-                    EntityList.Add(temp);
+                    EntityList.Add(temp); 
             }
 
             return EntityList;
+        }
+
+        static List<Buildings> SpawnBuilding(Buildings.Type buildingType, World CurrentWorld, int x, int y)
+        {
+            List<Buildings> BuildingList = new List<Buildings>();
+            Buildings temp = new Buildings(Buildings.Type.market, x, y);
+            if (CurrentWorld.SpawnBuilding(x, y, temp))
+                BuildingList.Add(temp);
+            return BuildingList;
         }
     }
 }

@@ -31,6 +31,19 @@ namespace AI
         private List<Items> Items;
         private Position pos;
 
+        public void doBuild(World CurrentWorld)
+        {
+            Buildings temp = CurrentWorld.getBuildingByPos(pos.X, pos.Y);
+            if (temp != null)
+            {
+                foreach(Items context in Items)
+                {
+                    temp.addResource(new AI.Items(context.itemType(), context.Amount()));
+                    context.destroyItem(context.Amount());
+                }
+            }
+        }
+
         public void doMove(Direction direction, World CurrentWorld)
         {
             Position previous = pos;

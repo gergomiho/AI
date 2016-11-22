@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buildings.cs" />
+    <Compile Include="Engine.cs" />
     <Compile Include="Entities.cs" />
     <Compile Include="Items.cs" />
     <Compile Include="Program.cs" />
