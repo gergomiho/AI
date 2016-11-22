@@ -11,7 +11,8 @@ namespace AI
         static void Main(string[] args)
         {
             World CurrentWorld = new World();
-            List<Entities> EntityList = SpawnEntities(200,CurrentWorld);
+            List<Entities> EntityList = SpawnEntities(100,CurrentWorld);
+            Random rnd = new Random(Guid.NewGuid().GetHashCode());
             
 
             int counter = 0;
@@ -29,14 +30,15 @@ namespace AI
                 foreach (Entities current in EntityList)
                 {
                     current.doAge();
-                    current.doWork();
+                    current.doWork(CurrentWorld);
+                    current.doMove((Entities.Direction)rnd.Next(0,5),CurrentWorld);
                     if (current.isAlive())
                     {
                         foreach (Entities next in EntityList)
                         {
                             if (current != next)
                             {
-                                born.Add(current.doBreed(next));
+                                //born.Add(current.doBreed(next));
                                 current.doFight(next);
                             }
                         }
@@ -65,7 +67,10 @@ namespace AI
                 }
 
                 counter++;
-                Console.WriteLine("Round {0} has finished ! Total entities : {1} male, {2} female !", counter, EntityList.Count(x => x.isMale()), EntityList.Count(x => !x.isMale()), EntityList.Count);
+                //Console.WriteLine("Round {0} has finished ! Total entities : {1} male, {2} female !", counter, EntityList.Count(x => x.isMale()), EntityList.Count(x => !x.isMale()), EntityList.Count);
+                Console.Clear();
+                CurrentWorld.DisplayEntityCount();
+                
                 Console.Title = String.Format("Population : {0} | Money : {1} | Wood : {2} | Stone : {3} | Meat : {4}", EntityList.Count, sumMoney, sumStone, sumWood, sumMeat);
                 System.Threading.Thread.Sleep(1000);
             }
@@ -77,7 +82,7 @@ namespace AI
             for(int i = 0; i<Amount; i++)
             {
                 Entities temp = new Entities();
-                if(CurrentWorld.SpawnEntity(temp.getPosition().X, temp.getPosition().Y))
+                if(CurrentWorld.SpawnEntity(temp.getPosition().X, temp.getPosition().Y, temp))
                     EntityList.Add(temp);
             }
 

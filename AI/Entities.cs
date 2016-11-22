@@ -14,6 +14,8 @@ namespace AI
             public int Y;
         }
 
+        public enum Direction { stay, left, right, up, down }
+
         Random rnd;
         private int itsAge;
         private int maxAge;
@@ -29,27 +31,29 @@ namespace AI
         private List<Items> Items;
         private Position pos;
 
-        public void doMove(String direction, World CurrentWorld)
+        public void doMove(Direction direction, World CurrentWorld)
         {
             Position previous = pos;
             switch(direction)
             {
-                case "left":
+                case Direction.left:
                     pos.X--;
                     break;
-                case "right":
+                case Direction.right:
                     pos.X++;
                     break;
-                case "up":
+                case Direction.up:
                     pos.Y--;
                     break;
-                case "down":
+                case Direction.down:
                     pos.Y++;
+                    break;
+                case Direction.stay:
                     break;
                 default:
                     break;
             }
-            if (!CurrentWorld.MoveEntity(previous.X, previous.Y, pos.X, pos.Y))
+            if (!CurrentWorld.MoveEntity(previous.X, previous.Y, pos.X, pos.Y, this))
                 pos = previous;
         }
 
@@ -91,7 +95,7 @@ namespace AI
                 {
                     if (this.itsBreedingRate >= rnd.NextDouble() && context.itsBreedingRate >= context.rnd.NextDouble())
                     {
-                        Console.WriteLine("Breeding !");
+                        //Console.WriteLine("Breeding !");
                         return new Entities();
                     }
                 }
@@ -106,7 +110,7 @@ namespace AI
             {
                 if (this.itsFightingRate >= rnd.NextDouble() && context.itsFightingRate >= context.rnd.NextDouble())
                 {
-                    Console.WriteLine("Fighting !");
+                    //Console.WriteLine("Fighting !");
                     if (this.itsStrength > context.itsStrength)
                         context.doInjury(this.itsStrength - context.itsStrength);
                     else if (this.itsStrength > context.itsStrength)
@@ -122,24 +126,24 @@ namespace AI
 
         private void doInjury(int damage)
         {
-            Console.WriteLine("Damage done : {0} !",damage);
+            //Console.WriteLine("Damage done : {0} !",damage);
             this.itsHealth -= damage;
             if (this.itsHealth <= 0)
             {
                 bIsAlive = false;
-                Console.WriteLine("Entity died !");
+                //Console.WriteLine("Entity died !");
             }
         }
 
-        public void doWork()
+        public void doWork(World CurrentWorld)
         {
             if (bIsAlive)
             {
                 if (itsWorkRate > this.rnd.NextDouble())
                 {
-                    Items.Type Type = (Items.Type)rnd.Next(0, 4);
+                    Items.Type Type = CurrentWorld.getTerrainType(pos.X, pos.Y);
                     Items[(int)Type]++;
-                    Console.WriteLine("Gathered one of {0}", Type);
+                    //Console.WriteLine("Gathered one of {0}", Type);
                 }
             }
         }
@@ -159,15 +163,15 @@ namespace AI
             itsHealth = rnd.Next(80, 100);
             bIsAlive = true;
             Items = new List<Items>() { new AI.Items(AI.Items.Type.money), new AI.Items(AI.Items.Type.wood), new AI.Items(AI.Items.Type.stone), new AI.Items(AI.Items.Type.meat) };
-            pos.X = rnd.Next(0, 11);
-            pos.Y = rnd.Next(0, 11);
+            pos.X = rnd.Next(0, 10);
+            pos.Y = rnd.Next(0, 10);
 
-            Console.WriteLine("Entity has born !");
+            //Console.WriteLine("Entity has born !");
         }
 
         ~Entities()
         {
-            Console.WriteLine("Entity has died !");
+            //Console.WriteLine("Entity has died !");
         }
     }
 }
