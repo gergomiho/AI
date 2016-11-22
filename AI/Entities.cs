@@ -8,6 +8,12 @@ namespace AI
 {
     class Entities
     {
+        public struct Position
+        {
+            public int X;
+            public int Y;
+        }
+
         Random rnd;
         private int itsAge;
         private int maxAge;
@@ -21,6 +27,36 @@ namespace AI
         private int maxFight;
         private bool bIsAlive;
         private List<Items> Items;
+        private Position pos;
+
+        public void doMove(String direction, World CurrentWorld)
+        {
+            Position previous = pos;
+            switch(direction)
+            {
+                case "left":
+                    pos.X--;
+                    break;
+                case "right":
+                    pos.X++;
+                    break;
+                case "up":
+                    pos.Y--;
+                    break;
+                case "down":
+                    pos.Y++;
+                    break;
+                default:
+                    break;
+            }
+            if (!CurrentWorld.MoveEntity(previous.X, previous.Y, pos.X, pos.Y))
+                pos = previous;
+        }
+
+        public Position getPosition()
+        {
+            return pos;
+        }
 
         public List<Items> itsItems()
         {
@@ -123,6 +159,8 @@ namespace AI
             itsHealth = rnd.Next(80, 100);
             bIsAlive = true;
             Items = new List<Items>() { new AI.Items(AI.Items.Type.money), new AI.Items(AI.Items.Type.wood), new AI.Items(AI.Items.Type.stone), new AI.Items(AI.Items.Type.meat) };
+            pos.X = rnd.Next(0, 11);
+            pos.Y = rnd.Next(0, 11);
 
             Console.WriteLine("Entity has born !");
         }

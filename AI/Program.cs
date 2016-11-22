@@ -10,7 +10,10 @@ namespace AI
     {
         static void Main(string[] args)
         {
-            List<Entities> EntityList = SpawnEntities(20);
+            World CurrentWorld = new World();
+            List<Entities> EntityList = SpawnEntities(200,CurrentWorld);
+            
+
             int counter = 0;
             int sumMoney = 0;
             int sumStone = 0;
@@ -68,12 +71,14 @@ namespace AI
             }
         }
 
-        static List<Entities> SpawnEntities(int Amount)
+        static List<Entities> SpawnEntities(int Amount, World CurrentWorld)
         {
             List<Entities> EntityList = new List<Entities>();
             for(int i = 0; i<Amount; i++)
             {
-                EntityList.Add(new Entities());
+                Entities temp = new Entities();
+                if(CurrentWorld.SpawnEntity(temp.getPosition().X, temp.getPosition().Y))
+                    EntityList.Add(temp);
             }
 
             return EntityList;
